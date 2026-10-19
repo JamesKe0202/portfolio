@@ -1,3 +1,451 @@
----
-layout: front
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yuping Ke — Game Audio and Sound Designer</title>
+<meta name="description" content="Yuping Ke — game audio and sound designer. Showreel and selected work in game audio, sound design and interactive installation.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230c0c0d'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%23ecebe6' font-family='Georgia,serif'%3EYK%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0c0c0d; --bg2:#151517; --fg:#ecebe6; --muted:#8d8c88; --line:#2a2a2d; --accent:#e6d3a3;
+  --serif: ui-serif,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","Noto Serif SC","Source Han Serif SC",serif;
+  --sans: system-ui,-apple-system,"Segoe UI","Helvetica Neue","PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --pad: clamp(20px,4vw,56px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--fg);-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);line-height:1.6;min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ---------- top bar ---------- */
+header{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+  padding:20px var(--pad);mix-blend-mode:normal;background:linear-gradient(var(--bg),rgba(12,12,13,0))}
+.brand{font-family:var(--serif);font-size:1.05rem;letter-spacing:.02em}
+nav{display:flex;gap:clamp(14px,3vw,36px);align-items:center;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase}
+nav a{position:relative;padding:4px 0;color:var(--muted);transition:color .25s}
+nav a:hover,nav a.active{color:var(--fg)}
+nav a::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:1px;background:var(--fg);transform:scaleX(0);transform-origin:left;transition:transform .35s}
+nav a.active::after{transform:scaleX(1)}
+.lang{display:flex;gap:2px;margin-left:6px;border:1px solid var(--line);border-radius:99px;padding:2px;letter-spacing:0;text-transform:none}
+.lang button{padding:2px 10px;border-radius:99px;font-size:.78rem;color:var(--muted)}
+.lang button.on{background:var(--fg);color:var(--bg)}
+
+/* ---------- page switching ---------- */
+.page{display:none;min-height:100vh;padding:110px var(--pad) 60px}
+.page.active{display:block;animation:rise .7s .05s both cubic-bezier(.2,.7,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.curtain{position:fixed;inset:0;z-index:50;background:var(--fg);transform:translateY(100%);pointer-events:none;
+  display:flex;align-items:center;justify-content:center;color:var(--bg);font-family:var(--serif);font-size:clamp(1.4rem,4vw,2.4rem);letter-spacing:.04em}
+.wrap{max-width:1320px;margin:0 auto}
+.next{display:flex;justify-content:flex-end;margin-top:90px;padding-top:28px;border-top:1px solid var(--line)}
+.next button{font-family:var(--serif);font-size:clamp(1.4rem,3.4vw,2.6rem);transition:color .25s,transform .35s}
+.next button:hover{color:var(--accent);transform:translateX(8px)}
+
+/* ---------- portfolio ---------- */
+.hero{padding:clamp(20px,6vh,70px) 0 clamp(28px,5vh,56px)}
+.hero h1{font-family:var(--serif);font-weight:400;line-height:.92;letter-spacing:-.03em;font-size:clamp(3.4rem,13.5vw,12rem)}
+.hero h1.zh{letter-spacing:.08em;line-height:1.05;font-size:clamp(3.4rem,15vw,12rem)}
+.hero p{margin-top:22px;color:var(--muted);font-size:clamp(.8rem,1.4vw,.95rem);letter-spacing:.22em;text-transform:uppercase}
+.label{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:0 0 18px;
+  font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.label span:last-child{letter-spacing:.06em;text-transform:none}
+.player{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;border:1px solid var(--line)}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.soon{position:absolute;inset:0;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;text-align:center;padding:20px;
+  color:var(--muted);background:radial-gradient(circle at 30% 20%,#1c1c1f,#0c0c0d)}
+.soon b{font-family:var(--serif);font-weight:400;color:var(--fg);font-size:1.2rem}
+.sect{margin-top:clamp(56px,9vw,110px)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px}
+.chip{border:1px solid var(--line);border-radius:99px;padding:5px 15px;font-size:.8rem;color:var(--muted);transition:.25s}
+.chip:hover{color:var(--fg);border-color:var(--muted)}
+.chip.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.grid{display:grid;gap:clamp(18px,2.2vw,34px);grid-template-columns:repeat(3,1fr)}
+.card{text-align:left;display:block;width:100%}
+.thumb{position:relative;aspect-ratio:16/9;overflow:hidden;background:linear-gradient(135deg,#202024,#101012);border:1px solid var(--line)}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.7,.2,1),filter .4s;filter:saturate(.85) brightness(.82)}
+.thumb .no{position:absolute;left:14px;top:10px;font-family:var(--serif);font-size:1.5rem;color:rgba(255,255,255,.55);z-index:2}
+.thumb .play{position:absolute;inset:0;display:grid;place-items:center;z-index:2;opacity:0;transition:opacity .3s}
+.thumb .play i{width:58px;height:58px;border-radius:50%;background:var(--fg);display:grid;place-items:center}
+.thumb .play i::after{content:"";border-left:15px solid var(--bg);border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:4px}
+.card:hover img{transform:scale(1.06);filter:saturate(1) brightness(1)}
+.card:hover .play,.card:focus-visible .play{opacity:1}
+.meta{padding:14px 2px 0}
+.meta small{display:block;color:var(--accent);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase}
+.meta h3{font-family:var(--serif);font-weight:400;font-size:1.2rem;line-height:1.3;margin-top:4px}
+.tba{position:absolute;right:10px;top:10px;z-index:2;background:rgba(0,0,0,.7);border:1px solid var(--line);font-size:.68rem;padding:2px 9px;border-radius:99px;color:var(--muted)}
+
+/* ---------- about / contact ---------- */
+h2.big{font-family:var(--serif);font-weight:400;font-size:clamp(2.6rem,8vw,7rem);line-height:1;letter-spacing:-.02em;margin:clamp(10px,4vh,40px) 0 clamp(30px,6vw,70px)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,6vw,100px)}
+.lead{font-family:var(--serif);font-size:clamp(1.25rem,2.2vw,1.75rem);line-height:1.5}
+.lead + p{margin-top:22px;color:var(--muted);max-width:60ch}
+.block + .block{margin-top:38px}
+.block h4{font-size:.76rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.block li{list-style:none;padding:4px 0}
+.block li span{color:var(--muted)}
+.edu{padding:6px 0 16px}
+.edu b{display:block;font-family:var(--serif);font-weight:400;font-size:1.25rem}
+.edu em{color:var(--muted);font-style:normal;font-size:.92rem}
+.contact-list a{display:flex;justify-content:space-between;gap:14px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--line);
+  font-family:var(--serif);font-size:clamp(1.2rem,3vw,2.2rem);transition:color .25s,padding .35s;word-break:break-all}
+.contact-list a span{font-family:var(--sans);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.contact-list a:hover{color:var(--accent);padding-left:12px}
+.contact-intro{max-width:46ch;color:var(--muted);margin-bottom:44px;font-size:1.05rem}
+footer{margin-top:70px;color:var(--muted);font-size:.78rem}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(5,5,6,.92);padding:var(--pad)}
+.modal.open{display:flex;animation:fade .3s both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal .box{width:min(1180px,100%)}
+.modal .cap{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-top:14px;font-family:var(--serif);font-size:1.1rem}
+.modal .cap a{font-family:var(--sans);font-size:.8rem;color:var(--muted);white-space:nowrap;border-bottom:1px solid var(--line)}
+.modal .cap a:hover{color:var(--fg)}
+.x{position:absolute;right:var(--pad);top:18px;font-size:2rem;line-height:1;color:var(--muted)}
+.x:hover{color:var(--fg)}
+
+@media (max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}}
+@media (max-width:620px){
+  .grid{grid-template-columns:1fr}
+  header{padding:14px var(--pad);flex-wrap:wrap;gap:8px}
+  nav{font-size:.7rem;gap:12px}
+  .brand{display:none}
+  header{justify-content:flex-end}
+  .page{padding-top:96px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" id="brandName" href="#portfolio" data-go="portfolio">Yuping Ke</a>
+  <nav>
+    <a href="#portfolio" data-go="portfolio" data-i18n="nav_portfolio">Portfolio</a>
+    <a href="#about" data-go="about" data-i18n="nav_about">About me</a>
+    <a href="#contact" data-go="contact" data-i18n="nav_contact">Contact</a>
+    <div class="lang" role="group" aria-label="Language">
+      <button data-lang="en">EN</button>
+      <button data-lang="zh">中文</button>
+    </div>
+  </nav>
+</header>
+
+<div class="curtain" id="curtain" aria-hidden="true"></div>
+
+<!-- ================= PAGE 1 : PORTFOLIO ================= -->
+<main class="page" id="page-portfolio">
+  <div class="wrap">
+    <section class="hero">
+      <h1 id="heroName">Yuping Ke</h1>
+      <p data-i18n="role">Sound Designer · Audio Programmer</p>
+    </section>
+
+    <section id="showreel">
+      <div class="label"><span data-i18n="showreel">Showreel</span><span data-i18n="showreel_note">Headphones recommended</span></div>
+      <div class="player" id="showreelPlayer"></div>
+    </section>
+
+    <section class="sect" id="work">
+      <div class="label"><span data-i18n="all_work">All Work</span><span id="count"></span></div>
+      <div class="filters" id="filters"></div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <div class="next"><button data-go="about" data-i18n="next_about">About me →</button></div>
+  </div>
+</main>
+
+<!-- ================= PAGE 2 : ABOUT ================= -->
+<main class="page" id="page-about">
+  <div class="wrap">
+    <h2 class="big" data-i18n="nav_about">About me</h2>
+    <div class="cols">
+      <div>
+        <p class="lead" data-i18n="about_lead"></p>
+        <p data-i18n="about_body"></p>
+      </div>
+      <div>
+        <div class="block">
+          <h4 data-i18n="h_tools">Audio Middleware &amp; Game Engines</h4>
+          <ul><li>Wwise</li><li>Unity · Unreal Engine</li></ul>
+        </div>
+        <div class="block">
+          <h4>DAWs</h4>
+          <ul><li>Ableton Live · Reaper · Pro Tools</li></ul>
+        </div>
+        <div class="block">
+          <h4 data-i18n="h_code">Audio Programming &amp; Coding</h4>
+          <ul><li>Max · Pure Data</li><li>C# · C++ · Python</li></ul>
+        </div>
+        <div class="block">
+          <h4 data-i18n="h_lang">Languages</h4>
+          <ul><li data-i18n="lang_zh"></li><li data-i18n="lang_en"></li></ul>
+        </div>
+        <div class="block">
+          <h4 data-i18n="h_edu">Education</h4>
+          <div class="edu"><b data-i18n="edu1"></b><em data-i18n="edu1m"></em></div>
+          <div class="edu"><b data-i18n="edu2"></b><em data-i18n="edu2m"></em></div>
+        </div>
+      </div>
+    </div>
+    <div class="next"><button data-go="contact" data-i18n="next_contact">Contact →</button></div>
+  </div>
+</main>
+
+<!-- ================= PAGE 3 : CONTACT ================= -->
+<main class="page" id="page-contact">
+  <div class="wrap">
+    <h2 class="big" data-i18n="nav_contact">Contact</h2>
+    <p class="contact-intro" data-i18n="contact_intro"></p>
+    <div class="contact-list" id="contactList"></div>
+    <div class="next"><button data-go="portfolio" data-i18n="next_back">← Back to portfolio</button></div>
+    <footer>© 2026 Yuping Ke</footer>
+  </div>
+</main>
+
+<!-- ================= VIDEO MODAL ================= -->
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <button class="x" id="modalClose" aria-label="Close">×</button>
+  <div class="box">
+    <div class="player" id="modalPlayer"></div>
+    <div class="cap"><span id="modalTitle"></span><a id="modalLink" target="_blank" rel="noopener"></a></div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   ★★★ 你只需要改这一块 / EDIT ONLY THIS BLOCK ★★★
+   yt = YouTube 视频 ID（英文版使用）
+   bv = Bilibili 的 BV 号（中文版使用），形如 "BV1xx411c7mD"。留空 "" 则显示"即将上线"
+   cover = 中文版封面图（可选，建议放 covers/ 文件夹，如 "covers/01.jpg"）；
+           英文版封面自动取自 YouTube。
+   ===================================================================== */
+const SHOWREEL = { yt: "KjG4Nttegx0", bv: "" };
+
+const VIDEOS = [
+  { yt:"AWZLbK8E6wE", bv:"BV18yJ86WEvj", cover:"uw01", cat:"game",
+    title:{ en:"Unreal+Wwise Technical Showcase_01",   zh:"Unreal+Wwise技术展示_01" } },
+
+  { yt:"yklP60V62sk", bv:"BV1H6Jb6TEGJ", cover:"engine", cat:"redesign",
+    title:{ en:"Vehicle Engines Sound Redesign",        zh:"载具引擎声音重设计" } },
+
+  { yt:"4VSHZ1_nTSw", bv:"BV1QKn769Es3", cover:"feixue", cat:"redesign",
+    title:{ en:"Wuthering Waves — Skills Sound Redesign", zh:"《鸣潮》技能音效重设计" } },
+
+  { yt:"S4bQHtovkw0", bv:"BV1nNnj6iEaJ", cover:"findtheone", cat:"game",
+    title:{ en:"Find The One — Global Game Jam 2026",   zh:"Find The One — Global Game Jam 2026" } },
+
+  { yt:"1Jn2lWnMhMo", bv:"BV1cUnj6TEgm", cover:"overcine", cat:"redesign",
+    title:{ en:"Overwatch Cinematic Sound Redesign",    zh:"《守望先锋》动画短片声音重设计" } },
+
+  { yt:"LhSTwB6WsJ0", bv:"BV1pPnj6TEFZ", cover:"soundghost", cat:"game",
+    title:{ en:"Sounding Ghost — Unity+Wwise, Multiplayer Interactive Game Audio", zh:"Sounding Ghost — Unity+Wwise 多人交互游戏音频" } },
+
+  { yt:"zAsM2ENTUvg", bv:"", cover:"", cat:"redesign",
+    title:{ en:"Backrooms — Soundtrack Remake",         zh:"Backrooms 声音重制" } },
+
+  { yt:"ThWaAi7l0H8", bv:"", cover:"", cat:"installation",
+    title:{ en:"Cocoon — Demo Video",                   zh:"Cocoon 互动装置演示" } }
+];
+
+const CONTACT = {
+  email:    "jameskes02@gmail.com",
+  linkedin: "https://linkedin.com/in/yuping-ke-000b60323",
+  itch:     "https://yuping-ke.itch.io/",
+  bilibili: ""   // 可选：你的 Bilibili 主页链接，填了之后中文版联系页会显示
+};
+const NAME = { en: "Yuping Ke", zh: "柯宇平" };
+/* ===================== 编辑区结束 / END OF EDIT BLOCK ===================== */
+
+const I18N = {
+  en:{
+    nav_portfolio:"Portfolio", nav_about:"About me", nav_contact:"Contact",
+    role:"Sound Designer · Audio Programmer",
+    showreel:"Showreel", showreel_note:"Headphones recommended",
+    all_work:"All Work",
+    f_all:"All", f_redesign:"Sound Redesign", f_game:"Game Audio", f_installation:"Interactive Installation",
+    cat_redesign:"Sound Redesign", cat_game:"Game Audio", cat_installation:"Interactive Installation",
+    next_about:"About me →", next_contact:"Contact →", next_back:"← Back to portfolio",
+    about_lead:"I'm a sound designer and audio programmer focusing on game audio with a background in games, film, and music. Proficient in Wwise, Unity, Unreal Engine, and major DAWs, I am passionate in shaping experiences and narratives through sound, crafting immersive soundscapes and designing impactful sound effects.",
+    about_body:"I design and implement interactive audio systems and dynamic soundscapes for games using industry-standard tools and engines, with experience in real-time feedback and system integration.",
+    h_tools:"Audio Middleware & Game Engines", h_code:"Audio Programming & Coding", h_lang:"Languages", h_edu:"Education",
+    lang_zh:"Chinese (Native)", lang_en:"English (Fluent)",
+    edu1:"Master of Sound Design", edu1m:"University of Edinburgh · Edinburgh, UK · Sep 2024 – Nov 2025",
+    edu2:"Bachelor of Art and Technology", edu2m:"Beijing Film Academy · Beijing, China · Sep 2020 – Jul 2024",
+    contact_intro:"If you'd like to collaborate, chat about ideas, or have any opportunities in mind, I'd love to hear from you!",
+    c_email:"Email", c_linkedin:"LinkedIn", c_itch:"itch.io", c_bilibili:"Bilibili",
+    soon_t:"Coming soon", soon_d:"This video is not available here yet.",
+    open_on:"Open on YouTube ↗", open_on_bv:"Open on Bilibili ↗", videos:"videos", tba:"Soon"
+  },
+  zh:{
+    nav_portfolio:"作品集", nav_about:"关于我", nav_contact:"联系",
+    role:"声音设计师 · 音频程序员",
+    showreel:"个人作品集锦", showreel_note:"建议佩戴耳机观看",
+    all_work:"全部作品",
+    f_all:"全部", f_redesign:"声音重设计", f_game:"游戏音频", f_installation:"交互装置",
+    cat_redesign:"声音重设计", cat_game:"游戏音频", cat_installation:"交互装置",
+    next_about:"关于我 →", next_contact:"联系我 →", next_back:"← 回到作品集",
+    about_lead:"我是一名拥有游戏、电影与音乐背景的游戏音频设计师。熟练使用 Wwise、Unity、Unreal Engine 及各大主流 DAW，希望用声音塑造沉浸和具有冲击力的体验与叙事。",
+    about_body:"我使用行业标准的工具与引擎，为游戏设计并实现交互音频系统与动态声音景观，具备实时反馈与系统集成方面的经验。",
+    h_tools:"音频中间件与游戏引擎", h_code:"音频编程与代码", h_lang:"语言", h_edu:"教育背景",
+    lang_zh:"中文（母语）", lang_en:"英语（专业）",
+    edu1:"声音设计硕士", edu1m:"爱丁堡大学 · 英国爱丁堡 · 2024年9月 – 2025年11月",
+    edu2:"艺术与科技学士", edu2m:"北京电影学院 · 中国北京 · 2020年9月 – 2024年7月",
+    contact_intro:"如果有合作、交流想法，或者有相关岗位机会，欢迎随时联系我！",
+    c_email:"邮箱", c_linkedin:"领英", c_itch:"itch.io", c_bilibili:"哔哩哔哩",
+    soon_t:"即将上线", soon_d:"该视频的 Bilibili 版本暂未添加。",
+    open_on:"在 YouTube 打开 ↗", open_on_bv:"在 Bilibili 打开 ↗", videos:"个视频", tba:"即将上线"
+  }
+};
+
+/* ---------------- language ---------------- */
+let lang = (() => {
+  const q = new URLSearchParams(location.search).get("lang");
+  if (q === "zh" || q === "en") return q;
+  try { const s = localStorage.getItem("lang"); if (s === "zh" || s === "en") return s; } catch(e){}
+  return (navigator.language || "").toLowerCase().startsWith("zh") ? "zh" : "en";
+})();
+const t = k => I18N[lang][k] ?? k;
+
+function applyLang(){
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+  const shownName = (lang === "zh" && NAME.zh) ? NAME.zh : NAME.en;
+  document.getElementById("heroName").textContent = shownName;
+  document.getElementById("heroName").classList.toggle("zh", lang === "zh" && !!NAME.zh);
+  document.getElementById("brandName").textContent = shownName;
+  document.title = lang === "zh" ? shownName + " — 游戏音频 & 声音设计" : NAME.en + " — Game Audio & Sound Design";
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = t(el.dataset.i18n); });
+  document.querySelectorAll(".lang button").forEach(b => b.classList.toggle("on", b.dataset.lang === lang));
+  renderShowreel(); renderFilters(); renderGrid(); renderContact();
+}
+document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => {
+  lang = b.dataset.lang;
+  try { localStorage.setItem("lang", lang); } catch(e){}
+  closeModal(); applyLang();
+}));
+
+/* ---------------- players ---------------- */
+function playerHTML(yt, bv, autoplay){
+  if (lang === "zh") {
+    if (!bv) return `<div class="soon"><b>${t("soon_t")}</b><span>${t("soon_d")}</span></div>`;
+    return `<iframe src="https://player.bilibili.com/player.html?isOutside=true&bvid=${encodeURIComponent(bv)}&p=1&high_quality=1&autoplay=${autoplay?1:0}" scrolling="no" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>`;
+  }
+  return `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(yt)}?rel=0&modestbranding=1${autoplay?"&autoplay=1":""}" title="video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+}
+function renderShowreel(){ document.getElementById("showreelPlayer").innerHTML = playerHTML(SHOWREEL.yt, SHOWREEL.bv, false); }
+
+/* ---------------- grid ---------------- */
+let filter = "all";
+function renderFilters(){
+  const cats = ["all","redesign","game","installation"];
+  document.getElementById("filters").innerHTML = cats.map(c =>
+    `<button class="chip ${c===filter?"on":""}" data-f="${c}">${t("f_"+c)}</button>`).join("");
+  document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => { filter = b.dataset.f; renderFilters(); renderGrid(); }));
+}
+function coverOf(v){ return lang === "zh" ? (v.cover || "") : `https://i.ytimg.com/vi/${v.yt}/hqdefault.jpg`; }
+function renderGrid(){
+  const list = VIDEOS.map((v,i)=>({v,i})).filter(o => filter==="all" || o.v.cat===filter);
+  document.getElementById("count").textContent = list.length + " " + t("videos");
+  document.getElementById("grid").innerHTML = list.map(({v,i}) => {
+    const c = coverOf(v);
+    const missing = lang==="zh" && !v.bv;
+    return `<button class="card" data-i="${i}">
+      <div class="thumb">
+        <span class="no">${String(i+1).padStart(2,"0")}</span>
+        ${missing ? `<span class="tba">${t("tba")}</span>` : ""}
+        ${c ? `<img src="${c}" alt="" loading="lazy" onerror="this.remove()">` : ""}
+        <span class="play"><i></i></span>
+      </div>
+      <div class="meta"><small>${t("cat_"+v.cat)}</small><h3>${v.title[lang]}</h3></div>
+    </button>`;
+  }).join("");
+  document.querySelectorAll(".card").forEach(b => b.addEventListener("click", () => openModal(+b.dataset.i)));
+}
+
+/* ---------------- modal ---------------- */
+const modal = document.getElementById("modal");
+function openModal(i){
+  const v = VIDEOS[i];
+  document.getElementById("modalPlayer").innerHTML = playerHTML(v.yt, v.bv, true);
+  document.getElementById("modalTitle").textContent = v.title[lang];
+  const a = document.getElementById("modalLink");
+  if (lang === "zh") { a.textContent = t("open_on_bv"); a.href = v.bv ? "https://www.bilibili.com/video/" + v.bv : "#"; a.style.display = v.bv ? "" : "none"; }
+  else { a.textContent = t("open_on"); a.href = "https://www.youtube.com/watch?v=" + v.yt; a.style.display = ""; }
+  modal.classList.add("open"); document.body.style.overflow = "hidden";
+}
+function closeModal(){
+  modal.classList.remove("open"); document.getElementById("modalPlayer").innerHTML = ""; document.body.style.overflow = "";
+}
+document.getElementById("modalClose").addEventListener("click", closeModal);
+modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+/* ---------------- contact ---------------- */
+function renderContact(){
+  const rows = [
+    ["c_email",    CONTACT.email,    "mailto:" + CONTACT.email, CONTACT.email],
+    ["c_linkedin", CONTACT.linkedin, CONTACT.linkedin, "yuping-ke"],
+    ["c_itch",     CONTACT.itch,     CONTACT.itch, "yuping-ke.itch.io"],
+  ];
+  if (lang === "zh" && CONTACT.bilibili) rows.push(["c_bilibili", CONTACT.bilibili, CONTACT.bilibili, "Bilibili"]);
+  document.getElementById("contactList").innerHTML = rows.filter(r => r[1]).map(r =>
+    `<a href="${r[2]}" ${r[2].startsWith("http")?'target="_blank" rel="noopener"':""}>${r[3]}<span>${t(r[0])} ↗</span></a>`).join("");
+}
+
+/* ---------------- page router (hash based, keeps old links working) ---------------- */
+const PAGES = ["portfolio","about","contact"];
+// 旧版站内锚点 → 新页面，旧链接（如 …/portfolio/#showreel）依然有效
+const ALIAS = { "":"portfolio", "page-top":"portfolio", showreel:"portfolio", showreels:"portfolio", work:"portfolio", contact:"contact", about:"about" };
+const routeFromHash = () => {
+  let h = location.hash.replace(/^#\/?/, "");
+  h = ALIAS[h] || h;
+  return PAGES.includes(h) ? h : "portfolio";
+};
+
+const curtain = document.getElementById("curtain");
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let current = null, busy = false, pending = null;
+
+function swapTo(p){
+  PAGES.forEach(n => document.getElementById("page-" + n).classList.toggle("active", n === p));
+  document.querySelectorAll("nav a").forEach(a => a.classList.toggle("active", a.dataset.go === p));
+  window.scrollTo(0, 0);
+  current = p;
+}
+function go(p){
+  if (p === current) return;
+  if (busy) { pending = p; return; }
+  if (current === null || reduced) { swapTo(p); return; }
+  busy = true;
+  curtain.textContent = t("nav_" + p);
+  curtain.style.transition = "none"; curtain.style.transform = "translateY(100%)"; void curtain.offsetHeight;
+  curtain.style.transition = "transform .5s cubic-bezier(.7,0,.2,1)"; curtain.style.transform = "translateY(0)";
+  setTimeout(() => { swapTo(p); curtain.style.transform = "translateY(-100%)"; }, 520);
+  setTimeout(() => {
+    busy = false;
+    if (pending && pending !== current) { const n = pending; pending = null; go(n); } else pending = null;
+  }, 1080);
+}
+function navigate(p){
+  const target = "#" + p;
+  if (location.hash !== target) history.pushState(null, "", target);
+  go(p);
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-go]");
+  if (!el) return;
+  e.preventDefault(); closeModal(); navigate(el.dataset.go);
+});
+window.addEventListener("popstate", () => go(routeFromHash()));
+window.addEventListener("hashchange", () => go(routeFromHash()));
+
+/* ---------------- init ---------------- */
+applyLang();
+swapTo(routeFromHash());
+</script>
+</body>
+</html>
